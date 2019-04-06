@@ -1,0 +1,14 @@
+{
+    "name": "dfelton/process-monitor",
+    "description": "Scrappy process monitoring solution",
+    "type": "project",
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Darren Felton",
+            "email": "darren_felton@hotmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
