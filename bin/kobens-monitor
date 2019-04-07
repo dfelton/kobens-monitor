@@ -3,8 +3,8 @@
 
 require \dirname(__DIR__).'/vendor/autoload.php';
 
-use ProcessMonitor\Command\Monitor;
-use ProcessMonitor\Config;
+use Kobens\Core\Config;
+use Kobens\Monitor\Command\Monitor;
 use Symfony\Component\Console\Application;
 
 try {

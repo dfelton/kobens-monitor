@@ -1,11 +1,11 @@
 <?php
 
-namespace ProcessMonitor\Command;
+namespace Kobens\Monitor\Command;
 
+use Kobens\Monitor\Watcher;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputArgument, InputInterface};
 use Symfony\Component\Console\Output\OutputInterface;
-use ProcessMonitor\Watcher;
 
 final class Monitor extends Command
 {
@@ -14,11 +14,17 @@ final class Monitor extends Command
         $this->setName('monitor');
         $this->setDescription('Monitor process who\'s command matches a given pattern.');
         $this->addArgument('pattern', InputArgument::REQUIRED, 'pattern to match for monitoring');
+        $this->addArgument('type', InputArgument::REQUIRED, 'Type of monitoring (cpu|memory)');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $watcher = new Watcher($input->getArgument('pattern'));
-        $watcher->watch();
+        $type = $input->getArgument('type');
+        if ($type !== 'cpu' && $type !== 'memory') {
+            $output->writeln('Invalid monitoring type');
+        } else {
+            $watcher = new Watcher($input->getArgument('pattern'), $type);
+            $watcher->watch();
+        }
     }
 }

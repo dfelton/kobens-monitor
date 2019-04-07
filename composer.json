@@ -11,13 +11,20 @@
         }
     ],
     "minimum-stability": "dev",
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/dfelton/kobens-core"
+        }
+    ],
     "require": {
+        "kobens/kobens-core": "dev-master",
         "symfony/console": "^4.2",
         "zendframework/zend-config": "^3.2"
     },
     "autoload": {
         "psr-4": {
-            "ProcessMonitor\\": "src"
+            "Kobens\\Monitor\\": "src"
         }
     }
 }
