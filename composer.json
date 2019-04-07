@@ -1,5 +1,6 @@
 {
     "name": "dfelton/process-monitor",
+    "version": "0.0.1",
     "description": "Scrappy process monitoring solution",
     "type": "project",
     "license": "BSD-3-Clause",
@@ -10,5 +11,13 @@
         }
     ],
     "minimum-stability": "dev",
-    "require": {}
+    "require": {
+        "symfony/console": "^4.2",
+        "zendframework/zend-config": "^3.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "ProcessMonitor\\": "src"
+        }
+    }
 }

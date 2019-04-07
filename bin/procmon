@@ -1,0 +1,26 @@
+#!/usr/bin/env php
+<?php
+
+require \dirname(__DIR__).'/vendor/autoload.php';
+
+use ProcessMonitor\Command\Monitor;
+use ProcessMonitor\Config;
+use Symfony\Component\Console\Application;
+
+try {
+    new Config(\dirname(__DIR__).'/etc/config.xml', \dirname(__DIR__));
+    $json = @\file_get_contents(dirname(__DIR__).'/composer.json');
+    if ($json === false) {
+        throw new \Exception('Unable to read application\'s composer.json file.');
+    }
+    $composer = @\json_decode($json);
+    if ($composer  === false) {
+        throw new \Exception('Unable to parse application\'s composer.json file.');
+    }
+} catch (\Exception $e) {
+    exit("Initialization Error: {$e->getMessage()}");
+}
+
+$application = new Application($composer->name, $composer->version);
+$application->add(new Monitor());
+$application->run();
