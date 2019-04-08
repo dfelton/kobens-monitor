@@ -1,46 +1,43 @@
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
 }
-
-h1,h2 {
+h1,h2{
 	margin:0 0 20px;
-	text-align:center
+	text-align:center;
 }
-
-.page {
-	padding: 40px 20px;
+.page{
+	padding:20px;
 }
-
-#containers {
+.offline{
+	color:#cc0000;
+	text-align:center;
+}
+#containers{
 	padding:20px;
 	width:100%;
 	height:100%;
 }
-
-.container {
+.container{
 	margin:0 0 50px;
 }
-
-.container:after {
+.container:after{
 	clear:both;
 	content:'';
 	display:block;
 	height:0px;
 	width:0px;
 }
-
-.monitor {
+.monitor{
 	height:300px;
 	width:48%;
 }
-.monitor:nth-child(odd) {
+.monitor:nth-child(odd){
 	clear:left;
 	float:left;
 }
-.monitor:nth-child(even) {
+.monitor:nth-child(even){
 	clear:right;
 	float:right;
 }

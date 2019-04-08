@@ -24,7 +24,7 @@ function monitorMemory()
 					$('#memory').append('<div id="memory_'+key+'" class="monitor memory"></div>');
 				}
 				var chart = new CanvasJS.Chart('memory_' + key, {
-				    title:{
+				    title: {
 				    	text: key.replace( /_/g, ':' )
 			    	},
 				    zoomEnabled: true,
@@ -39,10 +39,9 @@ function monitorMemory()
 			}
 		},
 		error: function() {
-			$('#memory').html('<h2>Memory</h2><p class="offline"><strong>Monitoring Offline</strong></p>');
+			$('#memory').html('<p class="offline"><strong>Monitoring Offline</strong></p>');
 		}
 	});
 	setTimeout(function() { monitorMemory(); }, 60000);
 }
-$('#containers').append('<div id="memory" class="container"></div>');
 $(function() { monitorMemory(); });

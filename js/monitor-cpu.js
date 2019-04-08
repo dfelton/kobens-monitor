@@ -39,10 +39,9 @@ function monitorCPU()
 			}
 		},
 		error: function() {
-			$('#cpu').html('<h2>CPU Usage</h2><p class="offline"><strong>Monitoring Offline</strong></p>');
+			$('#cpu').html('<p class="offline"><strong>Monitoring Offline</strong></p>');
 		}
 	});
 	setTimeout(function() { monitorCPU(); }, 60000);
 }
-$('#containers').append('<div id="cpu" class="container"></div>');
 $(function() { monitorCPU(); });
