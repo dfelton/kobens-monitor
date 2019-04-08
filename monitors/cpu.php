@@ -1,6 +1,6 @@
 <?php
 
-require \dirname(__DIR__).'/bootstrap.php';
+require __DIR__.'/bootstrap.php';
 
 use Kobens\Core\Config;
 use Kobens\Monitor\ResourceReporter;
