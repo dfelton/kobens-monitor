@@ -42,7 +42,7 @@ function monitorMemory()
 			$('#memory').html('<h2>Memory</h2><p class="offline"><strong>Monitoring Offline</strong></p>');
 		}
 	});
-	setTimeout(function() { monitorMemory(); }, 10000);
+	setTimeout(function() { monitorMemory(); }, 60000);
 }
 $('#containers').append('<div id="memory" class="container"></div>');
 $(function() { monitorMemory(); });

@@ -5,7 +5,7 @@ require \dirname(__DIR__).'/bootstrap.php';
 use Kobens\Core\Config;
 use Kobens\Monitor\ResourceReporter;
 
-$defaultHours = 8;
+$defaultHours = 1;
 $hours = \array_key_exists('hours', $_GET) ? (int) $_GET['hours'] : $defaultHours;
 if ($hours < 1) {
     $hours = $defaultHours;
