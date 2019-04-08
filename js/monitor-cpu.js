@@ -4,6 +4,9 @@ function monitorCPU()
 		dataType: 'json',
 		url: '/monitors/cpu.php',
 		success: function( data ) {
+			if ($('#cpu > .offline').get(0) != undefined) {
+				$('#cpu > .offline').remove();
+			}
 			for (var key in data) {
 				var chartData = [];
 				for (var pid in data[key]) {

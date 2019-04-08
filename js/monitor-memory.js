@@ -4,6 +4,9 @@ function monitorMemory()
 		dataType: 'json',
 		url: '/monitors/memory.php',
 		success: function( data ) {
+			if ($('#memory > .offline').get(0) != undefined) {
+				$('#memory > .offline').remove();
+			}
 			for (var key in data) {
 				var chartData = [];
 				for (var pid in data[key]) {
