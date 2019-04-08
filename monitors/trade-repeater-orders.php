@@ -22,8 +22,12 @@ foreach ($orders->getOrders() as $order) {
         $data[$exchange][$symbol][$side] = [];
     }
     $data[$exchange][$symbol][$side][] = [
+        'amount' => $order['amount'],
         'price' => $order['price'],
-        'amount' => $order['amount']
+        'buy_amount' => $order['buy_amount'],
+        'buy_price' => $order['buy_price'],
+        'sell_amount' => $order['sell_amount'],
+        'sell_price' => $order['sell_price'],
     ];
 }
 

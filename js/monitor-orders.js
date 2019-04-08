@@ -4,9 +4,13 @@ function monitorOrders()
 		dataType: 'json',
 		url: '/monitors/trade-repeater-orders.php',
 		success: function( data ) {
+			if ($('#orders > .offline').get(0) != undefined) {
+				$('#orders > .offline').remove();
+			}
 			for (var exchange in data) {
 				for (var symbol in data[exchange]) {
 					var chartData = [];
+					var strategyDataDataPoints = { buys: [], sells: [] };
 					var buys = 0;
 					var sells = 0;
 					for (var side in data[exchange][symbol]) {
@@ -19,12 +23,35 @@ function monitorOrders()
 							}
 							dataPoints.push({
 								x: data[exchange][symbol][side][i].price,
-								y: data[exchange][symbol][side][i].amount
+								y: data[exchange][symbol][side][i].amount,
+								buy_price: data[exchange][symbol][side][i].buy_price,
+								buy_amount: data[exchange][symbol][side][i].buy_amount,
+								sell_price: data[exchange][symbol][side][i].sell_price,
+								sell_amount: data[exchange][symbol][side][i].sell_amount
+							});
+							strategyDataDataPoints.buys.push({
+								x: data[exchange][symbol][side][i].buy_price,
+								y: data[exchange][symbol][side][i].buy_amount,
+								buy_price: data[exchange][symbol][side][i].buy_price,
+								buy_amount: data[exchange][symbol][side][i].buy_amount,
+								sell_price: data[exchange][symbol][side][i].sell_price,
+								sell_amount: data[exchange][symbol][side][i].sell_amount
+							});
+							strategyDataDataPoints.sells.push({
+								x: data[exchange][symbol][side][i].sell_price,
+								y: data[exchange][symbol][side][i].sell_amount,
+								buy_price: data[exchange][symbol][side][i].buy_price,
+								buy_amount: data[exchange][symbol][side][i].buy_amount,
+								sell_price: data[exchange][symbol][side][i].sell_price,
+								sell_amount: data[exchange][symbol][side][i].sell_amount
 							});
 						}
 						chartData.push({
 							type: 'scatter',
-							toolTipContent: '<strong>Price:</strong> {x}</br><strong>Amount:</strong> {y}',
+							toolTipContent: '<strong>Buy Price:</strong> {buy_price}</br>' +
+								'<strong>Buy Amount:</strong> {buy_amount}<br/>' +
+								'<strong>Sell Price:</strong> {sell_price}</br>' +
+								'<strong>Sell Amount:</strong> {sell_amount}<br/>',
 							name: side + ' orders',
 							showInLegend: true,
 							dataPoints: dataPoints
@@ -34,6 +61,8 @@ function monitorOrders()
 					if ($('#'+chartDomElement).get(0) == undefined) {
 						$('#orders').append('<div id="'+chartDomElement+'" class="monitor orders"></div>');
 						$('#orders').append('<div id="'+chartDomElement+'_count" class="monitor orders"></div>');
+						$('#orders').append('<div id="'+chartDomElement+'_buy_strategy" class="monitor orders"></div>');
+						$('#orders').append('<div id="'+chartDomElement+'_sell_strategy" class="monitor orders"></div>');
 					}
 					(new CanvasJS.Chart(chartDomElement, {
 						title: {
@@ -58,10 +87,56 @@ function monitorOrders()
 						data: [{
 							type: 'pie',
 							dataPoints: [
-								{y: buys, label: 'buys', indexLabel: buys + ' orders'},
-								{y: sells, label: 'sells', indexLabel: sells + ' orders'}
+								{y: buys, label: 'buys', indexLabel: buys + ' buy orders'},
+								{y: sells, label: 'sells', indexLabel: sells + ' sell orders'}
 							] 
 						}]
+					})).render();
+					(new CanvasJS.Chart(chartDomElement+'_buy_strategy', {
+						title: {
+							text: exchange + ' ' + symbol +' buy strategy'
+						},
+						axisX: {
+							title: 'Price'
+						},
+						axisY: {
+							title: 'Amount'
+						},
+						zoomEnabled: true,
+						data: [
+							{
+								type: 'scatter',
+								toolTipContent: '<strong>Buy Price:</strong> {buy_price}</br>' +
+									'<strong>Buy Amount:</strong> {buy_amount}<br/>' +
+									'<strong>Sell Price:</strong> {sell_price}</br>' +
+									'<strong>Sell Amount:</strong> {sell_amount}<br/>',
+								name: 'buy orders',
+								dataPoints: strategyDataDataPoints.buys
+							}
+						]
+					})).render();
+					(new CanvasJS.Chart(chartDomElement+'_sell_strategy', {
+						title: {
+							text: exchange + ' ' + symbol +' sell strategy'
+						},
+						axisX: {
+							title: 'Price'
+						},
+						axisY: {
+							title: 'Amount'
+						},
+						zoomEnabled: true,
+						data: [
+							{
+								type: 'scatter',
+								toolTipContent: '<strong>Buy Price:</strong> {buy_price}</br>' +
+									'<strong>Buy Amount:</strong> {buy_amount}<br/>' +
+									'<strong>Sell Price:</strong> {sell_price}</br>' +
+									'<strong>Sell Amount:</strong> {sell_amount}<br/>',
+								name: 'sell orders',
+								dataPoints: strategyDataDataPoints.sells
+							}
+						]
 					})).render();
 				}
 			}

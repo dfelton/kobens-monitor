@@ -41,3 +41,12 @@ h1,h2{
 	clear:right;
 	float:right;
 }
+.orders{
+	margin:0 0 30px;
+}
+.orders:nth-child(odd){
+	clear:left;
+}
+.orders:nth-child(even){
+	clear:right;
+}

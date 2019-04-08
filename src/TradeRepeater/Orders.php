@@ -32,8 +32,12 @@ final class Orders
                 'exchange' => $row->exchange,
                 'symbol'   => $row->symbol,
                 'side'     => $row->status === 'buy_placed' ? 'buy' : 'sell',
-                'price'    => (float) ($row->status === 'buy_placed' ? $row->buy_price : $row->sell_price),
                 'amount'   => (float) ($row->status === 'buy_placed' ? $row->buy_amount : $row->sell_amount),
+                'price'    => (float) ($row->status === 'buy_placed' ? $row->buy_price : $row->sell_price),
+                'buy_amount' => (float) $row->buy_amount,
+                'buy_price' => (float) $row->buy_price,
+                'sell_price' => (float) $row->sell_price,
+                'sell_amount' => (float) $row->sell_amount,
             ];
         }
     }
