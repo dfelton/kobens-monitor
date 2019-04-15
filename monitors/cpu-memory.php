@@ -19,7 +19,7 @@ $dir = $config->getLogDir();
 $data = [];
 
 foreach (\scandir($dir) as $file) {
-    if ($file !== '.' && $file != '..' && \strpos($file, 'memory.') === 0) {
+    if ($file !== '.' && $file != '..' && \strpos($file, 'cpu_memory.') === 0) {
         $filename = $dir.'/'.$file;
         $result = $reporter->getData($filename);
         if ($result) {

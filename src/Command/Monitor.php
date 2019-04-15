@@ -14,17 +14,10 @@ final class Monitor extends Command
         $this->setName('monitor');
         $this->setDescription('Monitor process who\'s command matches a given pattern.');
         $this->addArgument('pattern', InputArgument::REQUIRED, 'pattern to match for monitoring');
-        $this->addArgument('type', InputArgument::REQUIRED, 'Type of monitoring (cpu|memory)');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $type = $input->getArgument('type');
-        if ($type !== 'cpu' && $type !== 'memory') {
-            $output->writeln('Invalid monitoring type');
-        } else {
-            $watcher = new Watcher($input->getArgument('pattern'), $type);
-            $watcher->watch();
-        }
+        (new Watcher($input->getArgument('pattern')))->watch();
     }
 }

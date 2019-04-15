@@ -1,6 +1,6 @@
 function monitorOrders()
 {
-    if ($('#refresh_orders').val() == '0') {
+    if ($('#refresh-orders').val() == '0') {
         setTimeout(function() { monitorOrders(); }, 15000);
         return;
     }

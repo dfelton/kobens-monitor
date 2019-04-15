@@ -25,9 +25,10 @@ final class ResourceReporter
                 $line = \explode(',', $line);
                 $line[0] = (int) $line[0];
                 $line[1] = (float) $line[1];
+                $line[2] = (int) $line[2];
                 $age = $now - \substr($line[0], 0, -3);
                 if ($age < $this->since) {
-                    $data[] = [$line[0], $line[1]];
+                    $data[] = [$line[0], $line[1], $line[2]];
                 }
             }
         }

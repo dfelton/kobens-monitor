@@ -11,26 +11,18 @@ final class Watcher
      */
     private $pattern;
 
-    private $type;
-
     /**
      * @var Config
      */
     private $logDir;
 
-    public function __construct(string $pattern, string $type)
+    public function __construct(string $pattern)
     {
         if ($pattern === '') {
             throw new \InvalidArgumentException('Pattern cannot be an empty string');
         }
-        if ($type !== 'cpu' && $type !== 'memory') {
-            throw new \InvalidArgumentException('Watcher only supports "cpu" and "memory" watching');
-        }
         $this->pattern = $pattern;
-        $this->type = $type;
-        $config = new Config();
-
-        $dir = $config->getLogDir();
+        $dir = (new Config())->getLogDir();
         if (!\is_dir($dir) || !\is_writable($dir)) {
             throw new \Exception('Log directory unavailable.');
         }
@@ -45,7 +37,7 @@ final class Watcher
                 $filename = $this->getLogFilename($pid);
                 $handle = \fopen($filename, 'a');
                 foreach ($this->getUsage($pid) as $data) {
-                    \fwrite($handle, "{$data[0]},{$data[1]}\n");
+                    \fwrite($handle, "{$data[0]},{$data[1]},{$data[2]}\n");
                 }
                 \fclose($handle);
             }
@@ -56,7 +48,7 @@ final class Watcher
     private function getLogFilename(int $pid) : string
     {
         $command =  \str_replace(':', '_', $this->pattern);
-        return \sprintf('%s/%s.%s.%s.log', $this->logDir, $this->type, $command, $pid);
+        return \sprintf('%s/cpu_memory.%s.%s.log', $this->logDir, $command, $pid);
     }
 
     private function getUsage(int $pid) : \Generator
@@ -65,18 +57,23 @@ final class Watcher
             throw new \LogicException('Process ID must be greater than zero');
         }
         $isDead = false;
-        $column = $this->type === 'cpu' ? '%cpu' : 'rss';
         do {
-            $max = 0;
+            $maxMemory = 0;
+            $maxCpu = 0;
             $time = \time();
             do {
-                $current = \rtrim(\shell_exec('ps ax -o '.$column.' '.$pid.' 2>/dev/null | sed -e "1,1d" | awk \'{$1=$1};1\''), PHP_EOL);
+                $current = \trim(\shell_exec('ps ax -o %cpu,rss '.$pid.' 2>/dev/null | sed -e "1,1d" | sed "s/  */ /g"'));
                 if ($current === '') {
                     $isDead = true;
                 } else {
-                    $current = $this->type === 'cpu' ? (float) $current : (int) $current;
-                    if ($current > $max) {
-                        $max = $current;
+                    $current = explode(' ', $current);
+                    $current[0] = (float) $current[0];
+                    $current[1] = (int) $current[1];
+                    if ($current[0] > $maxCpu) {
+                        $maxCpu = $current[0];
+                    }
+                    if ($current[1] > $maxMemory) {
+                        $maxMemory = $current[1];
                     }
                 }
                 \usleep(0050000); // max 20 polls per second
@@ -84,7 +81,8 @@ final class Watcher
 
             yield [
                 (int)(\microtime(true)*1000),
-                $this->type === 'cpu' ? $max : \round($max/1024, 2)
+                $maxCpu,
+                $maxMemory,
             ];
         } while (!$isDead);
     }
