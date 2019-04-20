@@ -2,16 +2,41 @@
 
 namespace Kobens\Monitor;
 
+use Kobens\Core\Config;
+
 final class ResourceReporter
 {
     private $since;
+    private $prefix;
 
-    public function __construct(int $since)
+    public function __construct(int $since, string $prefix = '')
     {
         $this->since = $since;
     }
 
-    public function getData(string $filename)
+    public function getData() : array
+    {
+        $dir = (new Config())->getLogDir();
+        $data = [];
+        foreach (\scandir($dir) as $file) {
+            if (   $file !== '.'
+                && $file != '..'
+                && \strpos($file, 'cpu_memory.') === 0
+                && [] !== $result = $this->parseFile($dir.'/'.$file)
+            ) {
+                $log = \explode('.', $file);
+                $pid = (int) $log[2];
+                $log = $log[1];
+                if (!\array_key_exists($log, $data)) {
+                    $data[$log] = [];
+                }
+                $data[$log][$pid] = $result;
+            }
+        }
+        return $data;
+    }
+
+    private function parseFile(string $filename) : array
     {
         if (!\is_file($filename) || !\is_readable($filename)) {
             throw new \Exception('Unable to read from requested file.');
@@ -19,7 +44,10 @@ final class ResourceReporter
         $data = [];
         $now = \time();
         if ($now - \filemtime($filename) < $this->since) {
-            $lines = \shell_exec("tail -n $this->since $filename"); // last 8 hours if log has 1 line per second
+            // last 8 hours if log has 1 line per second.
+            // If more than one data point per second we'll lose data
+            // (and are probably logging too much for CPU/Memory needs)
+            $lines = \shell_exec("tail -n $this->since $filename");
             $lines = \explode(PHP_EOL, \trim($lines, PHP_EOL));
             foreach ($lines as $line) {
                 $line = \explode(',', $line);

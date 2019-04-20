@@ -3,6 +3,13 @@
     margin:0;
     padding:0;
 }
+.clear-after:after{
+    clear:both;
+    content:'';
+    display:block;
+    height:0px;
+    width:0px;
+}
 body{
     background:#2A2826;
     color:#fff;
@@ -11,6 +18,7 @@ h1,h2,h3{
     margin:0 0 20px;
     text-align:center;
 }
+label{margin:0 15px 0 0}
 .page{
     padding:20px;
 }
@@ -18,21 +26,23 @@ h1,h2,h3{
     color:#cc0000;
     text-align:center;
 }
-.monitors:after{
-    clear:both;
-    content:'';
-    display:block;
-    height:0px;
-    width:0px;
+.monitors{
+    margin:0 0 40px;
 }
 .monitor{
-    border-radius:10px;
     float:left;
+    padding:30px;
+    width:calc(100%/2);
+}
+.monitor-box{
+    border-radius:10px;
+    background:#fff;
     height:300px;
     overflow:hidden;
-    padding:30px;
-    width:calc(100%/3);
+    width:100%;
 }
 .orders{
     margin:0 0 30px;
 }
+
+a.canvasjs-chart-credit{display:none !important;}

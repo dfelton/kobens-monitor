@@ -66,10 +66,10 @@ function monitorOrders()
                     }
                     var chartDomElement = 'orders_' + exchange + '_' + symbol;
                     if ($('#' + chartDomElement).get(0) == undefined) {
-                        $('#orders').append('<div id="' + chartDomElement + '" class="monitor orders"></div>');
-                        $('#orders').append('<div id="' + chartDomElement + '_count" class="monitor orders"></div>');
-                        $('#orders').append('<div id="' + chartDomElement + '_buy_strategy" class="monitor orders"></div>');
-                        $('#orders').append('<div id="' + chartDomElement + '_sell_strategy" class="monitor orders"></div>');
+                        $('#orders').append('<div class="monitor orders"><div class="monitor-box clear-after" id="' + chartDomElement + '"></div></div>');
+                        $('#orders').append('<div class="monitor orders"><div class="monitor-box clear-after" id="' + chartDomElement + '_count"></div></div>');
+                        $('#orders').append('<div class="monitor orders"><div class="monitor-box clear-after" id="' + chartDomElement + '_buy_strategy"></div></div>');
+                        $('#orders').append('<div class="monitor orders"><div class="monitor-box clear-after" id="' + chartDomElement + '_sell_strategy"></div></div>');
                     }
                     (new CanvasJS.Chart(chartDomElement, {
                         title: {

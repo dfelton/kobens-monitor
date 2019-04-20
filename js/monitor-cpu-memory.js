@@ -10,12 +10,12 @@ function monitorCpuAndMemory()
         success: function( data ) {
             var monitorTypes = ['cpu', 'memory'];
             for (var i in monitorTypes) {
-        	if ($('#' + monitorTypes[i] + ' > .offline').get(0) != undefined) {
-        	    $('#' + monitorTypes[i] + ' > .offline').remove();
-        	}
-        	if ($('#' + monitorTypes[i] + ' > .spinner').get(0) != undefined) {
-        	    $('#' + monitorTypes[i] + ' > .spinner').remove();
-        	}
+            if ($('#' + monitorTypes[i] + ' > .offline').get(0) != undefined) {
+                $('#' + monitorTypes[i] + ' > .offline').remove();
+            }
+            if ($('#' + monitorTypes[i] + ' > .spinner').get(0) != undefined) {
+                $('#' + monitorTypes[i] + ' > .spinner').remove();
+            }
             }
             for (var key in data) {
                 var chartDataMemory = [];
@@ -24,7 +24,7 @@ function monitorCpuAndMemory()
                     var processDataMemory = [];
                     var processDataCpu = [];
                     for (var i in data[key][pid]) {
-                	var date = new Date(data[key][pid][i][0]);
+                        var date = new Date(data[key][pid][i][0]);
                         processDataCpu.push({
                             x: date,
                             y: data[key][pid][i][1]
@@ -35,9 +35,9 @@ function monitorCpuAndMemory()
                         });
                     }
                     chartDataCpu.push({
-                	type: 'area',
-                	yValueFormatString: '###.##',
-                	dataPoints: processDataCpu
+                        type: 'area',
+                        yValueFormatString: '###.##',
+                        dataPoints: processDataCpu
                     });
                     chartDataMemory.push({
                         type: 'area',
@@ -47,19 +47,19 @@ function monitorCpuAndMemory()
                 }
                 for (var i in monitorTypes) {
                     if ($('#' + monitorTypes[i] + '_' + key).get(0) == undefined) {
-                	$('#' + monitorTypes[i]).append('<div id="' + monitorTypes[i] + '_' + key + '" class="monitor ' + monitorTypes[i] + '"></div>');
+                        $('#' + monitorTypes[i]).append('<div class="monitor ' + monitorTypes[i] + '"><div class="monitor-box clear-after" id="' + monitorTypes[i] + '_' + key + '"></div></div>');
                     }
                 }
                 var titleText = key.replace( /_/g, ':' );
                 (new CanvasJS.Chart('cpu_' + key, {
                     title: {
-                	text: titleText
+                    text: titleText
                     },
                     zoomEnabled: true,
                     axisY: {
-                	title: 'CPU Usage',
-                	titleFontSize: 24,
-                	suffix: '%'
+                        title: 'CPU Usage',
+                        titleFontSize: 24,
+                        suffix: '%'
                     },
                     data: chartDataCpu
                 })).render();
