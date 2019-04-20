@@ -78,7 +78,6 @@ final class Watcher
                 }
                 \usleep(0050000); // max 20 polls per second
             } while (!$isDead && $time === \time());
-
             yield [
                 (int)(\microtime(true)*1000),
                 $maxCpu,
@@ -90,9 +89,10 @@ final class Watcher
     private function getPID() : int
     {
         $pid = 0;
-        $processes = \shell_exec('ps  -o pid,command | sed -e "1,1d"');
-        $processes = \explode(PHP_EOL, $processes);
+        $processes = \shell_exec('ps -o pid,command | sed -e "1,1d"');
+        $processes = \explode(PHP_EOL, \trim($processes));
         foreach ($processes as $process) {
+            $process = \trim($process);
             if (\strpos($process, 'kobens-monitor') === false && \strpos($process, $this->pattern) !== false) {
                 if ($pid === 0) {
                     $pid = (int) \substr($process, 0, \strpos($process, ' '));

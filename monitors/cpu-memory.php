@@ -1,9 +1,8 @@
 <?php
 
-require __DIR__.'/bootstrap.php';
+require \dirname(__DIR__).'/src/bootstrap.php';
 
-use Kobens\Core\Config;
-use Kobens\Monitor\ResourceReporter;
+use Kobens\Monitor\ResourceReporter as Reporter;
 
 $defaultHours = 1;
 $hours = \array_key_exists('hours', $_GET) ? (int) $_GET['hours'] : $defaultHours;
@@ -13,26 +12,5 @@ if ($hours < 1) {
     $hours = $defaultHours;
 }
 
-$config = new Config();
-$reporter = new ResourceReporter(60 * 60 * $hours);
-$dir = $config->getLogDir();
-$data = [];
-
-foreach (\scandir($dir) as $file) {
-    if ($file !== '.' && $file != '..' && \strpos($file, 'cpu_memory.') === 0) {
-        $filename = $dir.'/'.$file;
-        $result = $reporter->getData($filename);
-        if ($result) {
-            $log = \explode('.', $file);
-            $pid = (int) $log[2];
-            $log = $log[1];
-            if (!\array_key_exists($log, $data)) {
-                $data[$log] = [];
-            }
-            $data[$log][$pid] = $result;
-        }
-    }
-}
-
 \header('content-type:application/json');
-echo \json_encode($data);
+echo \json_encode((new Reporter(60 * 60 * $hours, 'cpu_memory.'))->getData());
