@@ -9,7 +9,8 @@ use Zend\Db\TableGateway\TableGateway;
 
 final class Orders
 {
-    const TABLE_NAME = 'trader_simple_repeater';
+    const TABLE_NAME = 'trade_repeater';
+
     /**
      * @var Adapter
      */
@@ -24,25 +25,33 @@ final class Orders
     {
         $data = $this->getTable()->select(function(Select $select)
         {
-            $select->columns(['exchange','symbol','status','buy_price','buy_amount','sell_price','sell_amount']);
-            $select->where->in('status', ['buy_placed', 'sell_placed']);
+            $select->columns([
+                'id',
+                'symbol',
+                'status',
+                'buy_price',
+                'buy_amount',
+                'sell_price',
+                'sell_amount'
+            ]);
+            $select->where->in('status', ['BUY_PLACED', 'SELL_PLACED']);
         });
         foreach ($data as $row) {
             yield [
-                'exchange' => $row->exchange,
-                'symbol'   => $row->symbol,
-                'side'     => $row->status === 'buy_placed' ? 'buy' : 'sell',
-                'amount'   => (float) ($row->status === 'buy_placed' ? $row->buy_amount : $row->sell_amount),
-                'price'    => (float) ($row->status === 'buy_placed' ? $row->buy_price : $row->sell_price),
-                'buy_amount' => (float) $row->buy_amount,
-                'buy_price' => (float) $row->buy_price,
-                'sell_price' => (float) $row->sell_price,
-                'sell_amount' => (float) $row->sell_amount,
+                'id' => $row->id,
+                'symbol' => $row->symbol,
+                'side' => $row->status === 'BUY_PLACED' ? 'buy' : 'sell',
+                'amount' => (float) ($row->status === 'BUY_PLACED' ? $row->buy_amount : $row->sell_amount),
+                'price' => (float) ($row->status === 'BUY_PLACED' ? $row->buy_price : $row->sell_price),
+                'buy_amount' => $row->buy_amount,
+                'buy_price' => $row->buy_price,
+                'sell_price' => $row->sell_price,
+                'sell_amount' => $row->sell_amount,
             ];
         }
     }
 
-    private function getTable() : TableGateway
+    private function getTable(): TableGateway
     {
         return new TableGateway(self::TABLE_NAME, $this->db);
     }
