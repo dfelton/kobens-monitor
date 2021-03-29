@@ -6,7 +6,7 @@ function monitorCpuAndMemory()
     }
     $.ajax({
         dataType: 'json',
-        url: '/monitors/cpu-memory.php',
+        url: 'monitors/cpu-memory.php',
         success: function( data ) {
             var monitorTypes = ['cpu', 'memory'];
             for (var i in monitorTypes) {
