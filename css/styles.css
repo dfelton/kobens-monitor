@@ -41,3 +41,9 @@ label{margin:0 15px 0 0}
 }
 
 a.canvasjs-chart-credit{display:none !important;}
+
+a.home{font-size: 60px}
+
+@media only screen and (max-width: 1200px)  {
+    .monitor { float:none;width:100%; }
+}

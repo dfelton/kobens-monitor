@@ -7,7 +7,7 @@
 </head>
 <body>
     <div class="page">
-        <p><a href="/">Home</a></p>
+        <p><a href="/" class="home">Home</a></p>
     	<input type="checkbox" checked="checked" id="refresh"/><label for="refresh">Auto Refresh</label>
     	<!--
         <div class="container-fluid form-group" style="display:none">
