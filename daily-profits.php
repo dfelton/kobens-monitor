@@ -8,6 +8,7 @@
 </head>
 <body>
 <div class="page">
+    <p><a href="/" class="home">Home</a></p>
 	<input type="checkbox" checked="checked" id="refresh"/><label for="refresh">Auto Refresh</label>
     <div class="container-fluid monitors clear-after">
 		<div id="daily-profits" class="monitor-box clear-after">
