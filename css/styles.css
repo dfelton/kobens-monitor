@@ -44,6 +44,10 @@ a.canvasjs-chart-credit{display:none !important;}
 
 a.home{font-size: 60px}
 
-@media only screen and (max-width: 1200px)  {
+@media only screen and (max-width: 1600px) {
+    .monitor { width:calc(100%/3); }
+}
+
+@media only screen and (max-width: 1200px) {
     .monitor { float:none;width:100%; }
 }
