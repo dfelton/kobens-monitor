@@ -10,3 +10,5 @@ try {
 } catch (\Exception $e) {
     exit("Initialization Error: {$e->getMessage()}");
 }
+
+ini_set('memory_limit', '512M');
