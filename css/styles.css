@@ -28,9 +28,8 @@ label{margin:0 15px 0 0}
 }
 .monitors{padding:20px}
 .monitor{
-    float:left;
     padding:10px;
-    width:calc(100%/6);
+    width:100%;
 }
 .monitor-box{
     border-radius:10px;
@@ -43,11 +42,3 @@ label{margin:0 15px 0 0}
 a.canvasjs-chart-credit{display:none !important;}
 
 a.home{font-size: 60px}
-
-@media only screen and (max-width: 1600px) {
-    .monitor { width:calc(100%/3); }
-}
-
-@media only screen and (max-width: 1200px) {
-    .monitor { float:none;width:100%; }
-}
