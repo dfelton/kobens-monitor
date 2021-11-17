@@ -1,170 +1,145 @@
-function monitorOrders(forceFetch)
-{
-    if (forceFetch || document.querySelector('#refresh:checked') !== null) {
-        $.ajax({
-            dataType: 'json',
-            url: 'monitors/trade-repeater-orders.php',
-            success: function( data ) {
-                if ($('#orders > .offline').get(0) != undefined) {
-                    $('#orders > .offline').remove();
-                }
-                if ($('#orders > .spinner').get(0) != undefined) {
-                    $('#orders > .spinner').remove();
-                }
-                for (var exchange in data) {
-                    for (var symbol in data[exchange]) {
-                        var chartData = [];
-    //                     var strategyDataDataPoints = { buys: [], sells: [] };
-                        var buys = 0;
-                        var sells = 0;
-                        for (var side in data[exchange][symbol]) {
-                            var dataPoints = [];
-                            for (var i in data[exchange][symbol][side]) {
-                                if (side == 'buy') {
-                                    buys++;
-                                    var color = 'green';
-                                } else {
-                                    sells++;
-                                    var color = 'red';
-                                }
-                                dataPoints.push({
-                                    x: data[exchange][symbol][side][i].price,
-                                    y: data[exchange][symbol][side][i].amount,
-                                    color: color,
-                                    id: data[exchange][symbol][side][i].id,
-                                    buy_amount: data[exchange][symbol][side][i].buy_amount,
-                                    buy_price: data[exchange][symbol][side][i].buy_price,
-                                    buy_price_increase: data[exchange][symbol][side][i].buy_price_increase,
-                                    buy_price_increase_percent: data[exchange][symbol][side][i].buy_price_increase_percent,
-                                    sell_amount: data[exchange][symbol][side][i].sell_amount,
-                                    sell_price: data[exchange][symbol][side][i].sell_price,
-                                    sell_price_increase: data[exchange][symbol][side][i].sell_price_increase,
-                                    sell_price_increase_percent: data[exchange][symbol][side][i].sell_price_increase_percent,
-                                    save_amount: data[exchange][symbol][side][i].save_amount
-                                });
-    //                             strategyDataDataPoints.buys.push({
-    //                                 x: data[exchange][symbol][side][i].buy_price,
-    //                                 y: data[exchange][symbol][side][i].buy_amount,
-    //                                 buy_amount: data[exchange][symbol][side][i].buy_amount,
-    //                                 buy_price: data[exchange][symbol][side][i].buy_price,
-    //                                 sell_amount: data[exchange][symbol][side][i].sell_amount,
-    //                                 sell_price: data[exchange][symbol][side][i].sell_price
-    //                             });
-    //                             strategyDataDataPoints.sells.push({
-    //                                 x: data[exchange][symbol][side][i].sell_price,
-    //                                 y: data[exchange][symbol][side][i].sell_amount,
-    //                                 buy_amount: data[exchange][symbol][side][i].buy_amount,
-    //                                 buy_price: data[exchange][symbol][side][i].buy_price,
-    //                                 sell_amount: data[exchange][symbol][side][i].sell_amount,
-    //                                 sell_price: data[exchange][symbol][side][i].sell_price
-    //                             });
-                            }
-                            chartData.push({
-                                type: 'scatter',
-                                toolTipContent: '<strong>ID:</strong> {id}</br>' +
-                                    '<strong>Buy Price:</strong> {buy_price}</br>' +
-                                    '<strong>Buy Price Increase:</strong> {buy_price_increase}</br>' +
-                                    '<strong>Buy Price Increase Percent:</strong> {buy_price_increase_percent}</br>' +
-                                    '<strong>Buy Amount:</strong> {buy_amount}<br/>' +
-                                    '<strong>Sell Price:</strong> {sell_price}</br>' +
-                                    '<strong>Sell Amount:</strong> {sell_amount}<br/>' +
-                                    '<strong>Sell Price Increase:</strong> {sell_price_increase}</br>' +
-                                    '<strong>Sell Price Increase Percent:</strong> {sell_price_increase_percent}</br>' +
-                                    '<strong>Save Amount:</strong> {save_amount}</br>',
-                                name: side + ' orders',
-                                showInLegend: true,
-                                dataPoints: dataPoints
-                            });
-                        }
-                        var chartDomElement = 'orders_' + exchange + '_' + symbol;
-                        if ($('#' + chartDomElement).get(0) == undefined) {
-                            $('#orders').append('<div class="monitor orders"><div class="monitor-box clear-after" id="' + chartDomElement + '"></div></div>');
-    //                         $('#orders').append('<div class="monitor orders"><div class="monitor-box clear-after" id="' + chartDomElement + '_count"></div></div>');
-    //                         $('#orders').append('<div class="monitor orders"><div class="monitor-box clear-after" id="' + chartDomElement + '_buy_strategy"></div></div>');
-    //                         $('#orders').append('<div class="monitor orders"><div class="monitor-box clear-after" id="' + chartDomElement + '_sell_strategy"></div></div>');
-                        }
-                        (new CanvasJS.Chart(chartDomElement, {
-                            title: {
-                                text: symbol
-    //                             text: 'active ' + exchange + ' ' + symbol + ' orders'
-                            },
-                            axisX: {
-                                title: 'Price'
-                            },
-                            axisY: {
-                                title: 'Amount'
-                            },
-                            zoomEnabled: true,
-                            data: chartData
-                        })).render();
-    //                     (new CanvasJS.Chart(chartDomElement + '_count', {
-    //                         title: {
-    //                             text: 'active ' + exchange + ' ' + symbol + ' order count',
-    //                         },
-    //                         axisY: {
-    //                             title: 'Count'
-    //                         },
-    //                         data: [{
-    //                             type: 'pie',
-    //                             dataPoints: [
-    //                                 { y: buys,  label: 'buys',  indexLabel: buys  + ' buy orders' },
-    //                                 { y: sells, label: 'sells', indexLabel: sells + ' sell orders' }
-    //                             ]
-    //                         }]
-    //                     })).render();
-    
-    //                     (new CanvasJS.Chart(chartDomElement + '_buy_strategy', {
-    //                         title: {
-    //                             text: exchange + ' ' + symbol + ' buy strategy'
-    //                         },
-    //                         axisX: {
-    //                             title: 'Price'
-    //                         },
-    //                         axisY: {
-    //                             title: 'Amount'
-    //                         },
-    //                         zoomEnabled: true,
-    //                         data: [{
-    //                             type: 'scatter',
-    //                             toolTipContent:
-    //                                 '<strong>Buy Price:</strong> {buy_price}</br>' +
-    //                                 '<strong>Buy Amount:</strong> {buy_amount}<br/>' +
-    //                                 '<strong>Sell Price:</strong> {sell_price}</br>' +
-    //                                 '<strong>Sell Amount:</strong> {sell_amount}<br/>',
-    //                             name: 'buy orders',
-    //                             dataPoints: strategyDataDataPoints.buys
-    //                         }]
-    //                     })).render();
-    //                     (new CanvasJS.Chart(chartDomElement + '_sell_strategy', {
-    //                         title: {
-    //                             text: exchange + ' ' + symbol + ' sell strategy'
-    //                         },
-    //                         axisX: {
-    //                             title: 'Price'
-    //                         },
-    //                         axisY: {
-    //                             title: 'Amount'
-    //                         },
-    //                         zoomEnabled: true,
-    //                         data: [{
-    //                             type: 'scatter',
-    //                             toolTipContent:
-    //                                 '<strong>Buy Price:</strong> {buy_price}</br>' +
-    //                                 '<strong>Buy Amount:</strong> {buy_amount}<br/>' +
-    //                                 '<strong>Sell Price:</strong> {sell_price}</br>' +
-    //                                 '<strong>Sell Amount:</strong> {sell_amount}<br/>',
-    //                             name: 'sell orders',
-    //                             dataPoints: strategyDataDataPoints.sells
-    //                         }]
-    //                     })).render();
-                    }
-                }
-            },
-            error: function() {
-                $('#orders').html('<p class="offline"><strong>Monitoring Offline</strong></p>');
+(() => {
+    window.gemini = {
+        domElementId: 'canvas_chart',
+        refresh: 10000,
+        endpoint: 'monitors/trade-repeater-orders.php',
+        chart: null,
+        isExecuting: false,
+        isInit: false,
+        chartDefaults: {
+            axisX: {title: 'Price'},
+            axisY: {title: 'Amount'},
+            zoomEnabled: true,
+        },
+        tooltipContent: '<strong>ID:</strong> {id}</br>' +
+            '<strong>Buy Price:</strong> {buy_price}</br>' +
+            '<strong>Buy Amount:</strong> {buy_amount}<br/>' +
+            '<br/>' +
+            '<strong>Sell Price:</strong> {sell_price}</br>' +
+            '<strong>Sell Amount:</strong> {sell_amount}<br/>' +
+            '<strong>Sell Price Increase:</strong> {sell_price_increase}</br>' +
+            '<strong>Sell Price Increase Percent:</strong> {sell_price_increase_percent}</br>' +
+            '<br/>' +
+            '<strong>Buy Quote Subtotal:</strong> {buy_quote_subtotal}</br>' +
+            '<strong>Buy Quote Fees:</strong> {buy_quote_fees}</br>' +
+            '<strong>Buy Quote Total:</strong> {buy_quote_total}</br>' +
+            '<br/>' +
+            '<strong>Sell Quote Subtotal:</strong> {sell_quote_subtotal}</br>' +
+            '<strong>Sell Quote Fees:</strong> {sell_quote_fees}</br>' +
+            '<strong>Sell Quote Total:</strong> {sell_quote_total}</br>' +
+            '<br/>' +
+            '<strong>Profit Base:</strong> {profit_base}</br>' +
+            '<strong>Profit Quote:</strong> {profit_quote}</br>' +
+            '',            
+        init: async function() {
+            if (this.isInit === false) {
+                this.isInit = true
+                this.chart = new CanvasJS.Chart(this.domElementId, this.chartDefaults)
+                this.update()
+                //this.loop()
             }
-        });
+        },
+        loop: async function() {
+            if (document.querySelector('#auto-update:checked') !== null) {
+                this.update()
+            }
+            setTimeout(
+                () => window.gemini.loop(),
+                this.refresh
+            )
+        },
+        error: function() {
+            console.log('error...')
+            this.complete()
+        },
+        complete: function() {
+            this.isExecuting = false
+            document.getElementById('symbol').disabled = false
+            document.getElementById('symbol').focus()
+        },
+        update: function() {
+            if (this.isExecuting === true || this.isInit === false) {
+                return
+            }
+            this.isExecuting = true
+            document.getElementById('symbol').disabled = true
+            this.fetch()
+        },
+        getAjaxUrl: function() {
+            let symbol = this.getSymbol()
+            return this.endpoint + (symbol === '' ? '' : '?symbol=' + symbol)
+        },
+        getSymbol: () => {
+            let select = document.getElementById('symbol')
+            return select.options[select.selectedIndex].value
+        },
+        updateChart: function(data) {
+            parsed = this.parseData(data);
+            this.chart.options.title = { text: this.getSymbol() }
+            this.chart.options.data = parsed.orders
+            this.chart.render()
+            document.getElementById('total-orders').innerHTML = parsed.meta.total_orders
+            document.getElementById('total-buy-orders').innerHTML = parsed.meta.total_buy_orders
+            document.getElementById('total-buy-usd').innerHTML = parsed.meta.total_buy_usd
+            document.getElementById('total-sell-orders').innerHTML = parsed.meta.total_sell_orders
+            document.getElementById('total-sell-usd').innerHTML = parsed.meta.total_sell_usd
+            document.getElementById('total-base-label').innerHTML = parsed.meta.base_symbol
+            document.getElementById('total-base-purchased').innerHTML = parsed.meta.total_base_purchased
+            document.getElementById('avg-base-label').innerHTML = parsed.meta.base_symbol
+            document.getElementById('avg-base-price').innerHTML = parsed.meta.average_base_price
+            document.getElementById('current-value').innerHTML = parsed.meta.base_current_value
+            this.complete()
+        },
+        parseData: function(data) {
+            let chartData = []
+            for (let status in data.orders) {
+                let dataPoints = []
+                for (let i in data.orders[status]) {
+                    dataPoints.push({
+                        x: data.orders[status][i].price,
+                        y: data.orders[status][i].amount,
+                        id: data.orders[status][i].id,
+                        color: data.orders[status][i].color,
+                        buy_amount: data.orders[status][i].buy_amount,
+                        buy_price: data.orders[status][i].buy_price,
+                        sell_amount: data.orders[status][i].sell_amount,
+                        sell_price: data.orders[status][i].sell_price,
+                        sell_price_increase: data.orders[status][i].sell_price_increase,
+                        sell_price_increase_percent: data.orders[status][i].sell_price_increase_percent,
+                        buy_quote_subtotal: data.orders[status][i].buy_quote_subtotal,
+                        buy_quote_fees: data.orders[status][i].buy_quote_fees,
+                        buy_quote_total: data.orders[status][i].buy_quote_total,
+                        sell_quote_subtotal: data.orders[status][i].sell_quote_subtotal,
+                        sell_quote_fees: data.orders[status][i].sell_quote_fees,
+                        sell_quote_total: data.orders[status][i].sell_quote_total,
+                        profit_base: data.orders[status][i].profit_base,
+                        profit_quote: data.orders[status][i].profit_quote
+                    })
+                }
+                chartData.push({
+                    type: 'scatter',
+                    toolTipContent: this.tooltipContent,
+                    name: status,
+                    legendText: status,
+                    legendMarkerColor: data.orders[status][0].color,
+                    showInLegend: true,
+                    dataPoints: dataPoints
+                })
+            }
+            return {
+                'orders': chartData,
+                'meta': data.meta
+            }
+        },
+        fetch: async function() {
+            $.ajax({
+                dataType: 'json',
+                url: this.getAjaxUrl(),
+                success: (data) => this.updateChart(data),
+                error: () => this.error(),
+                complete: () => this.complete()
+            })
+        }
     }
-    setTimeout(function() { monitorOrders(); }, 60000);
-}
-$(function() { monitorOrders(true); });
+    window.gemini.init()
+})()

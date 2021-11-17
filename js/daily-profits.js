@@ -29,9 +29,11 @@ function dailyProfits()
 			var chartDataMovingAverages = [];
             for (var symbol in data) {
                 var isVisible = false;
-                if (symbol == 'usd' || symbol == 'total_notional') {
+                if (symbol == 'total_notional') {
                     isVisible = true;
-				}
+				} else {
+                    continue;
+                }
                 var symbolData = {
                     type:"line",
                     axisYType: "secondary",
@@ -108,7 +110,7 @@ function dailyProfits()
 
 				symbolDataMovingAverage.dataPoints = dataPointsMovingAverage;
 				symbolDataMovingAverage30.dataPoints = dataPointsMovingAverage30;
-				chartDataMovingAverages.push(symbolDataMovingAverage);
+				//chartDataMovingAverages.push(symbolDataMovingAverage);
 				chartDataMovingAverages.push(symbolDataMovingAverage30);
             }
 

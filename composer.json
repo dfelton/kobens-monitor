@@ -11,25 +11,46 @@
         }
     ],
     "minimum-stability": "dev",
-    "repositories": [
-        {
+    "repositories": {
+        "kobens-currency": {
             "type": "git",
-            "url": "https://github.com/dfelton/kobens-core"
+            "url": "git@github.com:dfelton/kobens-currency"
         },
-        {
+        "kobens-http": {
             "type": "git",
-            "url": "https://github.com/dfelton/kobens-math"
+            "url": "git@github.com:dfelton/kobens-http"
+        },
+        "kobens-exchange": {
+            "type": "git",
+            "url": "git@github.com:dfelton/kobens-exchange"
+        },
+        "kobens-gemini": {
+            "type": "git",
+            "url": "git@github.com:dfelton/kobens-gemini"
+        },
+        "kobens-core": {
+            "type": "git",
+            "url": "git@github.com:dfelton/kobens-core"
+        },
+        "kobens-math": {
+            "type": "git",
+            "url": "git@github.com:dfelton/kobens-math"
         }
-    ],
+    },
     "require": {
         "kobens/kobens-core": "dev-master",
+        "kobens/kobens-currency": "^4.0.1",
+        "kobens/kobens-gemini": "dev-master",
         "kobens/kobens-math": "^2.0",
         "symfony/console": "^4.2",
-        "zendframework/zend-config": "^3.2"
+        "zendframework/zend-config": "^3.4"
     },
     "autoload": {
         "psr-4": {
             "Kobens\\Monitor\\": "src"
         }
+    },
+    "config": {
+        "sort-packages": true
     }
 }

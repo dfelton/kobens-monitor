@@ -13,6 +13,8 @@
 body{
     background:#2A2826;
     color:#fff;
+    font-family: "Courier New";
+    font-size: 24px;
 }
 h1,h2,h3{
     margin:0 0 20px;
@@ -34,7 +36,7 @@ label{margin:0 15px 0 0}
 .monitor-box{
     border-radius:10px;
     background:#fff;
-    height:400px;
+    height:600px;
     overflow:hidden;
     width:100%;
 }
@@ -42,3 +44,18 @@ label{margin:0 15px 0 0}
 a.canvasjs-chart-credit{display:none !important;}
 
 a.home{font-size: 60px}
+
+button {
+    border-radius: 10px;
+    padding: 0 10px;
+}
+select {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 10px;
+    padding: 4px 0;
+}
+
+
+.data-table{margin:20px 0;padding:0 20px;width:100%}
+.data-table td{border:1px solid #fff;padding:5px}

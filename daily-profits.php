@@ -4,12 +4,12 @@
 <title>xkcd.com/1732/</title>
 <link rel="stylesheet" href="css/bootstrap.min.css"/>
 <link rel="stylesheet" href="css/styles.css"/>
-<style type="text/css">.monitor-box{height:1500px}</style>
+<style type="text/css">.monitor-box{height:800px}</style>
 </head>
 <body>
 <div class="page">
     <p><a href="/" class="home">Home</a></p>
-	<input type="checkbox" checked="checked" id="refresh"/><label for="refresh">Auto Refresh</label>
+	<input type="checkbox" id="refresh"/><label for="refresh">Auto Refresh</label>
     <div class="container-fluid monitors clear-after">
 		<div id="daily-profits" class="monitor-box clear-after">
 			<img src="/img/loading.gif" class="spinner"/>

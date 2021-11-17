@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 require \dirname(__DIR__).'/src/bootstrap.php';
 
-
 set_error_handler(function(int $errNo, string $errStr, string $errFile, int $errLine, array $errContext): void {
     return;
 });
 
 use Kobens\Monitor\TradeRepeater\Orders;
-
-$orders = new Orders();
-$data = [];
+use Kobens\Math\BasicCalculator\Add;
+use Kobens\Math\BasicCalculator\Multiply;
+use Kobens\Math\BasicCalculator\Divide;
+use Kobens\Math\BasicCalculator\Subtract;
 
 function getInt(string $price): int {
     $price = (string) $price;
@@ -42,46 +42,70 @@ function getString(int $price): string {
         : $whole;
 }
 
-function addData(&$data): void {
-    $priorPrice = null;
-    foreach (array_keys($data) as $i) {
-        if ($priorPrice === null) {
-            $data[$i]['buy_price_increase'] = 'N/A';
-        } else {
-            $diff = $i - $priorPrice;
-            $percentIncrease = bcmul(bcdiv((string) $diff, (string) $priorPrice, 5), '100', 3);
+function addData(array &$data): void {
+    foreach ($data as &$arr) {
 
-            $data[$i]['buy_price_increase'] = getString($diff);
-            $data[$i]['buy_price_increase_percent'] = $percentIncrease . '%';
-        }
-        $priorPrice = $i;
+        $quoteMeta = getQuoteMeta(
+            $arr['buy_amount'],
+            $arr['buy_price'],
+            $arr['sell_amount'],
+            $arr['sell_price']
+        );
 
-        $buySellDiff = bcsub((string) $data[$i]['sell_price'], (string) $data[$i]['buy_price'], 8);
-        $buySellPercentGain = bcmul(bcdiv($buySellDiff, (string) $data[$i]['buy_price'], 5), '100', 3);
-        $buySellDiff = rtrim(rtrim($buySellDiff, '0'), '.');
+        $buySellDiff = Subtract::getResult((string) $arr['sell_price'], (string) $arr['buy_price']);
+        $buySellPercentGain = bcmul(bcdiv($buySellDiff, (string) $arr['buy_price'], 5), '100', 3);
         $buySellPercentGain = rtrim(rtrim($buySellPercentGain, '0'), '.');
-        $data[$i]['sell_price_increase'] = $buySellDiff;
-        $data[$i]['sell_price_increase_percent'] = $buySellPercentGain . '%';
+        $arr['sell_price_increase'] = $buySellDiff;
+        $arr['sell_price_increase_percent'] = $buySellPercentGain . '%';
+        $arr['profit_base'] = Subtract::getResult($arr['buy_amount'], $arr['sell_amount']);
 
-        $buyAmount = (string) $data[$i]['buy_amount'];
-        $sellAmount = (string) $data[$i]['sell_amount'];
-        $saveAmount = bcsub($buyAmount, $sellAmount, 8);
-
-        $data[$i]['save_amount'] = rtrim(rtrim($saveAmount, '0'), '.');
+        $arr['sell_quote_subtotal'] = $quoteMeta['sell_quote_subtotal'];
+        $arr['sell_quote_fees'] = $quoteMeta['sell_quote_fees'];
+        $arr['sell_quote_total'] = $quoteMeta['sell_quote_total'];
+        $arr['profit_quote'] = $quoteMeta['profit_quote'];
     }
 }
 
-foreach ($orders->getOrders() as $order) {
-    $symbol = $order['symbol'];
-    $side = $order['side'];
+function getQuoteMeta(string $buyAmount, string $buyPrice, string $sellAmount, string $sellPrice, string $assumedFeeRate = '0.001'): array
+{
+    $buyQuoteSubtotal = Multiply::getResult($buyAmount, $buyPrice);
+    $buyQuoteFees = Multiply::getResult($buyQuoteSubtotal, $assumedFeeRate);
+    $buyQuoteTotal = Add::getResult($buyQuoteSubtotal, $buyQuoteFees);
 
-    if (($data[$symbol] ?? null) === null) {
-        $data[$symbol] = [];
-    }
-    if (($data[$symbol][$side] ?? null) === null) {
-        $data[$symbol][$side] = [];
-    }
-    $data[$symbol][$side][getInt($order['buy_price'])] = [
+    $sellQuoteSubtotal = Multiply::getResult($sellAmount, $sellPrice);
+    $sellQuoteFees = Multiply::getResult($sellQuoteSubtotal, $assumedFeeRate);
+    $sellQuoteTotal = Subtract::getResult($sellQuoteSubtotal, $sellQuoteFees);
+
+    return [
+        'buy_quote_subtotal' => $buyQuoteSubtotal,
+        'buy_quote_fees' => $buyQuoteFees,
+        'buy_quote_total' => $buyQuoteTotal,
+        'sell_quote_subtotal' => $buyQuoteSubtotal,
+        'sell_quote_fees' => $buyQuoteFees,
+        'sell_quote_total' => $buyQuoteTotal,
+        'profit_quote' => Subtract::getResult($sellQuoteTotal, $buyQuoteTotal),
+    ];
+}
+
+function getPrice(string $symbol): string {
+    $handle = curl_init('https://api.gemini.com/v1/pubticker/' . $symbol);
+    curl_setopt($handle, CURLOPT_RETURNTRANSFER, 1);
+    $body = curl_exec($handle);
+    $data = json_decode(is_string($body) ? $body : '{}', true);
+    return $data['bid'] ?? '0';
+}
+
+$meta = [
+    'total_orders' => 0,
+    'total_buy_orders' => 0,
+    'total_buy_usd' => '0',
+    'total_sell_orders' => 0,
+    'total_sell_usd' => '0',
+    'total_base_purchased' => '0',
+];
+$data = [];
+foreach ((new Orders())->getOrders($_GET['symbol'] ?? 'btcusd') as $order) {
+    $data[$order['status']][] = [
         'id' => $order['id'],
         'amount' => $order['amount'],
         'price' => $order['price'],
@@ -89,22 +113,51 @@ foreach ($orders->getOrders() as $order) {
         'buy_price' => $order['buy_price'],
         'sell_amount' => $order['sell_amount'],
         'sell_price' => $order['sell_price'],
+        'color' => $order['color'],
     ];
+    if ($order['status'] === 'BUY_PLACED') {
+        ++$meta['total_orders'];
+        ++$meta['total_buy_orders'];
+        $meta['total_buy_usd'] = Add::getResult(
+            $meta['total_buy_usd'],
+            Multiply::getResult(
+                $order['buy_amount'],
+                $order['average_buy_price']
+            )
+        );
+    } elseif ($order['status'] === 'SELL_PLACED') {
+        ++$meta['total_orders'];
+        ++$meta['total_sell_orders'];
+
+        $meta['total_sell_usd'] = Add::getResult(
+            $meta['total_sell_usd'],
+            Multiply::getResult(
+                $order['average_buy_price'],
+                $order['buy_amount'],
+            ),
+        );
+        $meta['total_base_purchased'] = Add::getResult(
+            $meta['total_base_purchased'],
+            $order['buy_amount']
+        );
+    }
 }
+
+$meta['average_base_price'] = $meta['total_sell_orders'] === 0 ? '0' : Divide::getResult($meta['total_sell_usd'], $meta['total_base_purchased'], 4);
+$meta['base_symbol'] = substr($_GET['symbol'] ?? 'btcusd', 0, -3);
+$meta['base_current_value'] = Multiply::getResult(
+    $meta['total_base_purchased'],
+    getPrice($_GET['symbol'] ?? 'btcusd')
+);
+
 
 ksort($data);
-
-foreach (array_keys($data) as $symbol) {
-    if ($data[$symbol]['buy'] ?? null) {
-        ksort($data[$symbol]['buy']);
-        addData($data[$symbol]['buy']);
-    }
-    if ($data[$symbol]['sell'] ?? null) {
-        ksort($data[$symbol]['sell']);
-        addData($data[$symbol]['sell']);
-    }
+foreach ($data as &$status) {
+    addData($status);
 }
 
-
 \header('content-type:application/json');
-echo \json_encode(['gemini' => $data]);
+echo \json_encode([
+    'meta' => $meta,
+    'orders' => $data,
+]);
