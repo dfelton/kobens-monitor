@@ -34,9 +34,9 @@ final class Orders
         $this->db = (new Db())->getAdapter();
     }
 
-    public function getOrders(string $symbol) : \Generator
+    public function getOrders(string $symbol, ?string $status = null) : \Generator
     {
-        $data = $this->getTable()->select(function(Select $select) use ($symbol)
+        $data = $this->getTable()->select(function(Select $select) use ($symbol, $status)
         {
             $select->columns([
                 'id',
@@ -49,6 +49,9 @@ final class Orders
                 'meta',
             ]);
             $select->where->equalTo('symbol', $symbol);
+            if ($status) {
+                $select->where->equalTo('status', $status);
+            }
         });
         foreach ($data as $row) {
             $meta = json_decode($row->meta ?? '{}', true);

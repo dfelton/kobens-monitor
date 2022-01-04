@@ -11,6 +11,7 @@ li{padding:0 0 20px}
 <body>
     <ul>
         <li><a href="orders.php">Orders (line chart)</a></li>
+        <li><a href="buy-order-totals.php">Buy Order Totals</a></li>
         <li><a href="orders-pie.php">Orders (pie chart)</a></li>
         <li><a href="daily-profits.php">Daily Profits</a></li>
     </ul>
