@@ -60,6 +60,10 @@ function addData(array &$data): void {
         $arr['sell_price_increase_percent'] = $buySellPercentGain . '%';
         $arr['profit_base'] = Subtract::getResult($arr['buy_amount'], $arr['sell_amount']);
 
+        $arr['buy_quote_subtotal'] = $quoteMeta['buy_quote_subtotal'];
+        $arr['buy_quote_fees'] = $quoteMeta['buy_quote_fees'];
+        $arr['buy_quote_total'] = $quoteMeta['buy_quote_total'];
+
         $arr['sell_quote_subtotal'] = $quoteMeta['sell_quote_subtotal'];
         $arr['sell_quote_fees'] = $quoteMeta['sell_quote_fees'];
         $arr['sell_quote_total'] = $quoteMeta['sell_quote_total'];
