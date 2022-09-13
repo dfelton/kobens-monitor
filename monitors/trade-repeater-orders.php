@@ -10,6 +10,7 @@ set_error_handler(function(int $errNo, string $errStr, string $errFile, int $err
 
 use Kobens\Monitor\TradeRepeater\Orders;
 use Kobens\Math\BasicCalculator\Add;
+use Kobens\Math\BasicCalculator\Compare;
 use Kobens\Math\BasicCalculator\Multiply;
 use Kobens\Math\BasicCalculator\Divide;
 use Kobens\Math\BasicCalculator\Subtract;
