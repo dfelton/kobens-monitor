@@ -104,7 +104,18 @@ $meta = [
     'total_base_purchased' => '0',
 ];
 $data = [];
+
+$priceMax = (int) ($_GET['price_max'] ?? '0');
+$priceMin = (int) ($_GET['price_min'] ?? '0');
 foreach ((new Orders())->getOrders($_GET['symbol'] ?? 'btcusd') as $order) {
+
+    if (
+        ($priceMin && Compare::getResult($order['buy_price'], $priceMin) !== Compare::LEFT_GREATER_THAN) ||
+        ($priceMax && Compare::getResult($order['sell_price'], $priceMax) !== Compare::LEFT_LESS_THAN)
+    ) {
+        continue;
+    }
+
     $data[$order['status']][] = [
         'id' => $order['id'],
         'amount' => $order['amount'],
