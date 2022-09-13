@@ -18,7 +18,7 @@ $omitted = ['dai', 'paxg', 'ust'];
 <!--
         <p><a href="/" class="home">Home</a></p>
 -->
-        <select id="symbol" onchange="gemini.update()" tabindex="1">
+        <select id="symbol" onchange="gemini.resetMinMax();gemini.update()" tabindex="1">
             <?php foreach (Pair::getAllInstances() as $pair): ?>
                 <?php if ($pair->getQuote()->getSymbol() === 'usd' && !in_array($pair->getBase()->getSymbol(), $omitted)): ?>
                     <option value="<?= $pair->getSymbol() ?>"><?= $pair->getBase()->getSymbol() ?></option>
@@ -26,9 +26,9 @@ $omitted = ['dai', 'paxg', 'ust'];
             <?php endforeach ?>
         </select>
 
-        <input type="number" id="price-min" value="0"/>
+        <input type="number" id="price-min"/>
 
-        <input type="number" id="price-max" value="0"/>
+        <input type="number" id="price-max"/>
 
         <button id="update" tabindex="2" onclick="window.gemini.update()">Update</button>
         <!--

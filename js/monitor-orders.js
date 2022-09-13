@@ -82,6 +82,10 @@
         getMin: () => {
             return document.getElementById('price-min').value
         },
+        resetMinMax: () => {
+            document.getElementById('price-min').value = '';
+            document.getElementById('price-max').value = '';
+        },
         updateChart: function(data) {
             parsed = this.parseData(data);
             this.chart.options.title = { text: this.getSymbol() }
