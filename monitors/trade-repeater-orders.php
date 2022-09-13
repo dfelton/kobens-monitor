@@ -85,9 +85,9 @@ function getQuoteMeta(string $buyAmount, string $buyPrice, string $sellAmount, s
         'buy_quote_subtotal' => $buyQuoteSubtotal,
         'buy_quote_fees' => $buyQuoteFees,
         'buy_quote_total' => $buyQuoteTotal,
-        'sell_quote_subtotal' => $buyQuoteSubtotal,
-        'sell_quote_fees' => $buyQuoteFees,
-        'sell_quote_total' => $buyQuoteTotal,
+        'sell_quote_subtotal' => $sellQuoteSubtotal,
+        'sell_quote_fees' => $sellQuoteFees,
+        'sell_quote_total' => $sellQuoteTotal,
         'profit_quote' => Subtract::getResult($sellQuoteTotal, $buyQuoteTotal),
     ];
 }
