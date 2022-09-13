@@ -106,8 +106,8 @@ $meta = [
 ];
 $data = [];
 
-$priceMax = (int) ($_GET['price_max'] ?? '0');
-$priceMin = (int) ($_GET['price_min'] ?? '0');
+$priceMax = (string) (float) ($_GET['price_max'] ?? '0');
+$priceMin = (string) (float) ($_GET['price_min'] ?? '0');
 foreach ((new Orders())->getOrders($_GET['symbol'] ?? 'btcusd') as $order) {
 
     if (
