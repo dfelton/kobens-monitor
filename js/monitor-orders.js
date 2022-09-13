@@ -31,7 +31,7 @@
             '<strong>Profit Base:</strong> {profit_base}</br>' +
             '<strong>Profit Quote:</strong> {profit_quote}</br>' +
             '',            
-        init: async function() {
+        init: async () => {
             if (this.isInit === false) {
                 this.isInit = true
                 this.chart = new CanvasJS.Chart(this.domElementId, this.chartDefaults)
@@ -48,16 +48,16 @@
                 this.refresh
             )
         },
-        error: function() {
+        error: () => {
             console.log('error...')
             this.complete()
         },
-        complete: function() {
+        complete: () => {
             this.isExecuting = false
             document.getElementById('symbol').disabled = false
             document.getElementById('symbol').focus()
         },
-        update: function() {
+        update: () => {
             if (this.isExecuting === true || this.isInit === false) {
                 return
             }
@@ -65,15 +65,36 @@
             document.getElementById('symbol').disabled = true
             this.fetch()
         },
-        getAjaxUrl: function() {
-            let symbol = this.getSymbol()
-            return this.endpoint + (symbol === '' ? '' : '?symbol=' + symbol)
+        getAjaxUrl: () => {
+            return this.endpoint + this.getAjaxArgs()
+                
+        },
+        getAjaxArgs: () => {
+            let str = ''
+            if (this.getSymbol() !== '') {
+                str += '?symbol=' + this.getSymbol()
+            }
+            if (this.getMax()) {
+                str += (str === '' ? '?' : '&') +
+                    'price_max=' + this.getMax()
+            }
+            if (this.getMin()) {
+                str += (str === '' ? '?' : '&') +
+                    'price_min=' + this.getMin()
+            }
+            return str
         },
         getSymbol: () => {
             let select = document.getElementById('symbol')
             return select.options[select.selectedIndex].value
         },
-        updateChart: function(data) {
+        getMax: () => {
+            return document.getElementById('price-max').value
+        },
+        getMin: () => {
+            return document.getElementById('price-min').value
+        },
+        updateChart: (data) => {
             parsed = this.parseData(data);
             this.chart.options.title = { text: this.getSymbol() }
             this.chart.options.data = parsed.orders
@@ -90,7 +111,7 @@
             document.getElementById('current-value').innerHTML = parsed.meta.base_current_value
             this.complete()
         },
-        parseData: function(data) {
+        parseData: (data) => {
             let chartData = []
             for (let status in data.orders) {
                 let dataPoints = []
@@ -131,7 +152,7 @@
                 'meta': data.meta
             }
         },
-        fetch: async function() {
+        fetch: async () => {
             $.ajax({
                 dataType: 'json',
                 url: this.getAjaxUrl(),

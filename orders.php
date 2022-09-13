@@ -26,6 +26,10 @@ $omitted = ['dai', 'paxg', 'ust'];
             <?php endforeach ?>
         </select>
 
+        <input type="number" id="price-min" value="0"/>
+
+        <input type="number" id="price-max" value="0"/>
+
         <button id="update" tabindex="2" onclick="window.gemini.update()">Update</button>
         <!--
             FIXME: Need to have this application's calls obey api request limits.
