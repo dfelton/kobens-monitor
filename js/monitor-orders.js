@@ -62,11 +62,11 @@
             if (this.getSymbol() !== '') {
                 str += '?symbol=' + this.getSymbol()
             }
-            if (this.getMax()) {
+            if (this.getMax() && this.getMax() !== '0') {
                 str += (str === '' ? '?' : '&') +
                     'price_max=' + this.getMax()
             }
-            if (this.getMin()) {
+            if (this.getMin() && this.getMin() !== '0') {
                 str += (str === '' ? '?' : '&') +
                     'price_min=' + this.getMin()
             }
