@@ -1,7 +1,6 @@
 (() => {
     window.gemini = {
         domElementId: 'canvas_chart',
-        refresh: 10000,
         endpoint: 'monitors/trade-repeater-orders.php',
         chart: null,
         isExecuting: false,
@@ -31,33 +30,23 @@
             '<strong>Profit Base:</strong> {profit_base}</br>' +
             '<strong>Profit Quote:</strong> {profit_quote}</br>' +
             '',            
-        init: async () => {
+        init: async function() {
             if (this.isInit === false) {
                 this.isInit = true
                 this.chart = new CanvasJS.Chart(this.domElementId, this.chartDefaults)
                 this.update()
-                //this.loop()
             }
-        },
-        loop: async function() {
-            if (document.querySelector('#auto-update:checked') !== null) {
-                this.update()
-            }
-            setTimeout(
-                () => window.gemini.loop(),
-                this.refresh
-            )
         },
         error: () => {
             console.log('error...')
             this.complete()
         },
-        complete: () => {
+        complete: function() {
             this.isExecuting = false
             document.getElementById('symbol').disabled = false
             document.getElementById('symbol').focus()
         },
-        update: () => {
+        update: function() {
             if (this.isExecuting === true || this.isInit === false) {
                 return
             }
@@ -65,11 +54,10 @@
             document.getElementById('symbol').disabled = true
             this.fetch()
         },
-        getAjaxUrl: () => {
+        getAjaxUrl: function() {
             return this.endpoint + this.getAjaxArgs()
-                
         },
-        getAjaxArgs: () => {
+        getAjaxArgs: function() {
             let str = ''
             if (this.getSymbol() !== '') {
                 str += '?symbol=' + this.getSymbol()
@@ -94,7 +82,7 @@
         getMin: () => {
             return document.getElementById('price-min').value
         },
-        updateChart: (data) => {
+        updateChart: function(data) {
             parsed = this.parseData(data);
             this.chart.options.title = { text: this.getSymbol() }
             this.chart.options.data = parsed.orders
@@ -111,7 +99,7 @@
             document.getElementById('current-value').innerHTML = parsed.meta.base_current_value
             this.complete()
         },
-        parseData: (data) => {
+        parseData: function(data) {
             let chartData = []
             for (let status in data.orders) {
                 let dataPoints = []
@@ -152,7 +140,7 @@
                 'meta': data.meta
             }
         },
-        fetch: async () => {
+        fetch: async function() {
             $.ajax({
                 dataType: 'json',
                 url: this.getAjaxUrl(),
