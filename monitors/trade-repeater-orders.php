@@ -118,11 +118,15 @@ foreach ((new Orders())->getOrders($_GET['symbol'] ?? 'btcusd') as $order) {
     if ($order['status'] === 'BUY_PLACED') {
         ++$meta['total_orders'];
         ++$meta['total_buy_orders'];
+        $buyQuoteAmount = Multiply::getResult(
+            $order['buy_amount'],
+            $order['average_buy_price']
+        );
         $meta['total_buy_usd'] = Add::getResult(
             $meta['total_buy_usd'],
-            Multiply::getResult(
-                $order['buy_amount'],
-                $order['average_buy_price']
+            Add::getResult(
+                $buyQuoteAmount,
+                Multiply::getResult($buyQuoteAmount, '0.0035')
             )
         );
     } elseif ($order['status'] === 'SELL_PLACED') {

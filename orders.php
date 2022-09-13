@@ -4,6 +4,8 @@ use Kobens\Gemini\Exchange\Currency\Pair;
 
 require __DIR__ . '/vendor/autoload.php';
 
+$omitted = ['dai', 'paxg', 'ust'];
+
 ?><!DOCTYPE HTML>
 <html>
 <head>
@@ -13,11 +15,12 @@ require __DIR__ . '/vendor/autoload.php';
 </head>
 <body>
     <div class="page">
+<!--
         <p><a href="/" class="home">Home</a></p>
-
+-->
         <select id="symbol" onchange="gemini.update()" tabindex="1">
             <?php foreach (Pair::getAllInstances() as $pair): ?>
-                <?php if ($pair->getQuote()->getSymbol() === 'usd'): ?>
+                <?php if ($pair->getQuote()->getSymbol() === 'usd' && !in_array($pair->getBase()->getSymbol(), $omitted)): ?>
                     <option value="<?= $pair->getSymbol() ?>"><?= $pair->getBase()->getSymbol() ?></option>
                 <?php endif ?>
             <?php endforeach ?>
