@@ -71,7 +71,7 @@ function addData(array &$data): void {
     }
 }
 
-function getQuoteMeta(string $buyAmount, string $buyPrice, string $sellAmount, string $sellPrice, string $assumedFeeRate = '0.001'): array
+function getQuoteMeta(string $buyAmount, string $buyPrice, string $sellAmount, string $sellPrice, string $assumedFeeRate = '0.002'): array
 {
     $buyQuoteSubtotal = Multiply::getResult($buyAmount, $buyPrice);
     $buyQuoteFees = Multiply::getResult($buyQuoteSubtotal, $assumedFeeRate);
